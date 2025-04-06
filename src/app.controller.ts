@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 import { User } from './entities/aapp.entity';
 
@@ -15,7 +15,11 @@ export class AppController {
     return this.appService.allUser();
   }
   @Put('/putUser/:id')
-  async updateUser(@Param('id') id: string, @Body() user: User) {
+  async updateUser(@Param('id',ParseIntPipe) id: string, @Body() user: User) {
     return await this.appService.updateUser(Number(id), user);
+  }
+  @Delete('/deleteUser/:id')
+  deleteUser(@Param('id',ParseIntPipe) id:string){
+    return this.appService.deleteUser(Number(id))
   }
 }

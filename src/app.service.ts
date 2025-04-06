@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/aapp.entity';
+import { error } from 'console';
 
 @Injectable()
 export class AppService {
@@ -13,12 +14,20 @@ export class AppService {
   allUser(): any {
     return this.userRepo.find();
   }
-  async updateUser(id: number, user: User): Promise<User> {
-    const existingUser = await this.userRepo.findOneBy({ id });
-    if (!existingUser) {
-      throw new Error(`User with ID ${id} not found`);
+  async updateUser(id: number, user: Partial<User>): Promise<any> {
+    try {
+      const findUser = await this.userRepo.findOneBy({ id });
+      if (!findUser) {
+        throw new Error('bunday idga ega user yoq');
+      }
+      await this.userRepo.update(id, user);
+      return this.userRepo.findOneBy({ id });
+    } catch (error) {
+      return { error: `Bunday IDgamos user topilmadi` };
     }
-    const updateUser = Object.assign(existingUser, user);
-    return this.userRepo.save(updateUser);
+  }
+  deleteUser(id: number): string {
+    const user = this.userRepo.delete(id);
+    return 'Shu Idga tegishli user ochirildi';
   }
 }
